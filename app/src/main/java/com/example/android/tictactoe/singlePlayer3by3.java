@@ -60,15 +60,18 @@ public class singlePlayer3by3 extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View view) {
         //To check if there is an empty string
-        if(!((Button) view).getText().toString().equals("")){
+        if(!((Button) view).getText().toString().equals("") || !turnOfPlayer1){
             return;
         }
-        if (turnOfPlayer1){
-            ((Button )view).setText("X");
-        } else {
-            ((Button )view).setText("O");
-        }
+        //Human player's turn
+        ((Button) view).setText("X");
         numberOfTurns++;
+
+        //Determine winner or let the next player play...
+        nextTurn();
+    }
+
+    private void nextTurn() {
         if (CheckWin()){
             if(turnOfPlayer1) {
                 player1Wins();
@@ -79,9 +82,63 @@ public class singlePlayer3by3 extends AppCompatActivity implements View.OnClickL
             draw();
         } else {
             turnOfPlayer1 = !turnOfPlayer1;
+            //Give android the chance to play.
+//            Toast.makeText(this, "Android's turn now", Toast.LENGTH_SHORT).show();
+            turnOfAndroid();
         }
-
     }
+
+    private void turnOfAndroid() {
+        //Do the ticking of the right box,,,
+        //To check if there is an empty string
+        String[][] field = new String[3][3];
+
+        //Assign values of "buttons" to "field"
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                field[i][j] = buttons[i][j].getText().toString();
+            }
+        }
+        // To check for win in rows
+        if (field[0][0].equals("X") && field[0][2].equals("X")){
+            buttons[0][1].setText("O");
+        }
+        else if (field[1][0].equals("X") && field[1][2].equals("X")){
+            buttons[1][1].setText("O");
+        }
+        else if (field[2][0].equals("X") &&  field[2][2].equals("X")){
+            buttons[2][1].setText("O");
+        }
+        // To check for win in columns
+        else if (field[0][0].equals("X") || field[2][0].equals("X")){
+            buttons[1][0].setText("O");
+        }
+        else if (field[0][1].equals("X") || field[2][1].equals("X")){
+            buttons[1][1].setText("O");
+        }
+        else if (field[0][2].equals("X") || field[2][2].equals("X")){
+            buttons[1][2].setText("O");
+        }
+        //Other combinations
+        else if (field[0][0].equals(field[0][1]) ) {
+            buttons[0][2].setText("O");
+        }
+        else if (field[1][0].equals(field[1][1]) ) {
+            buttons[1][2].setText("O");
+        }
+        else if (field[2][0].equals(field[2][1]) ) {
+            buttons[2][2].setText("O");
+        }
+        //other possible
+
+        //Check win
+        if(CheckWin())
+            player2Wins();
+        //switch to turn of player 1
+        turnOfPlayer1 = !turnOfPlayer1;
+//        Toast.makeText(this,"It's your turn!", Toast.LENGTH_SHORT).show();
+    }
+
     //Check if someone has won
     private boolean CheckWin(){
         String[][] field = new String[3][3];
